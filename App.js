@@ -1,8 +1,27 @@
-import React from "react";
-import { StyleSheet, View, Text, Button, ScrollView } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  ScrollView,
+  TextInput
+} from "react-native";
 import Header from "./components/Header";
 
 export default function App() {
+  const [enteredItem, setEnteredItem] = useState("");
+
+  const [enteredItems, setEnteredItems] = useState([]);
+
+  const itemInputHandler = enteredText => {
+    setEnteredItem(enteredText);
+  };
+
+  const addItemHandler = () => {
+    setEnteredItems(currentItems => [...currentItems, enteredItem]);
+  };
+
   return (
     <View style={styles.screen}>
       <Header title="Personal Finanacial Management" />
@@ -16,16 +35,24 @@ export default function App() {
       </View>
       <ScrollView>
         <Text>Expenses</Text>
+        {enteredItems.map((item) => <Text>{item}</Text>)}
+        
       </ScrollView>
-      <ScrollView>
+      <View>
         <Text>Income</Text>
-      </ScrollView>
+      </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
           <Button title="ADD INCOME" />
         </View>
         <View style={styles.button}>
-          <Button title="ADD EXPENSE" />
+          <TextInput
+            placeholder="Item"
+            style={styles.input}
+            onChangeText={itemInputHandler}
+            value={enteredItem}
+          />
+          <Button title="ADD EXPENSE" onPress={addItemHandler} />
         </View>
       </View>
     </View>
@@ -47,9 +74,14 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: "row",
     justifyContent: "space-around",
-    margin: 25
+    padding: 50
   },
   button: {
     width: 150
+  },
+  input: {
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    padding: 10
   }
 });
