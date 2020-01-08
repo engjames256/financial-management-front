@@ -14,6 +14,7 @@ import Header from "./components/Header";
 export default class App extends React.Component {
   state = {
     enteredItem: {},
+    enteredAmount: {},
     enteredIncome: {},
     enteredItems: [],
     enteredIncomes: [],
@@ -32,6 +33,16 @@ export default class App extends React.Component {
     });
   };
 
+  itemInputHandlerAmount = enteredAmount => {
+    this.setState({
+      enteredAmount: {
+        id: Math.random()
+          .toString(36)
+          .substring(7),
+        enteredAmount: enteredAmount
+      }
+    });
+  };
   incomeInputHandler = enteredText => {
     this.setState({
       enteredIncome: {
@@ -42,11 +53,30 @@ export default class App extends React.Component {
       }
     });
   };
+  computeTotal = arrayOfItems => {
+    let total = 0;
+    arrayOfItems.length &&
+      arrayOfItems.forEach(item => {
+        total = total + parseInt(item.enteredAmount);
+      });
+    return total;
+  };
+
+  addItemHandler = () => {
+    const { enteredItems } = this.state;
+    const newList = enteredItems;
+    const newData = {
+      id: this.state.enteredItem.id,
+      enteredItem: this.state.enteredItem.enteredItem,
+      enteredAmount: this.state.enteredAmount.enteredAmount
+    };
+    newList.push(newData);
 
   addItemHandler = () => {
     const { enteredItems } = this.state;
     const newList = enteredItems;
     newList.push(this.state.enteredItem);
+
     this.setState({
       enteredItems: newList,
       isAddExpense: false
@@ -56,7 +86,16 @@ export default class App extends React.Component {
   addIncomeHandler = () => {
     const { enteredIncomes } = this.state;
     const newList = enteredIncomes;
+
+    const newData = {
+      id: this.state.enteredIncome.id,
+      enteredIncome: this.state.enteredIncome.enteredIncome,
+      enteredAmount: this.state.enteredAmount.enteredAmount
+    };
+    newList.push(newData);
+
     newList.push(this.state.enteredIncome);
+
     this.setState({
       enteredIncomes: newList,
       isAddIncome: false
@@ -73,10 +112,21 @@ export default class App extends React.Component {
         <Header title="Personal Finanacial Management" />
         <View style={styles.totals}>
           <View style={styles.totalexpense}>
+
+            <Text>
+              Total Expense: {this.computeTotal(this.state.enteredItems)}
+            </Text>
+          </View>
+          <View style={styles.totalexpense}>
+            <Text>
+              Total Income: {this.computeTotal(this.state.enteredIncomes)}
+            </Text>
+
             <Text>Total Expense: 10,000</Text>
           </View>
           <View style={styles.totalexpense}>
             <Text>Total Income: 20,000</Text>
+
           </View>
         </View>
         <View>
@@ -89,6 +139,9 @@ export default class App extends React.Component {
           renderItem={itemData => (
             <View style={styles.itemlist}>
               <Text>{itemData.item.enteredItem}</Text>
+
+              <Text>{itemData.item.enteredAmount}</Text>
+
             </View>
           )}
         />
@@ -103,6 +156,10 @@ export default class App extends React.Component {
           renderItem={itemData => (
             <View style={styles.itemlist}>
               <Text>{itemData.item.enteredIncome}</Text>
+
+              <Text>{itemData.item.enteredAmount}</Text>
+
+
             </View>
           )}
         />
@@ -137,8 +194,13 @@ export default class App extends React.Component {
             <TextInput
               placeholder="Amount"
               style={styles.input}
+
+              onChangeText={this.itemInputHandlerAmount}
+              value={this.state.enteredAmount.enteredAmount}
+
               onChangeText={this.itemInputHandler}
               value={this.state.enteredItem.enteredItem}
+
             />
           </View>
           <View style={styles.buttons}>
@@ -163,8 +225,13 @@ export default class App extends React.Component {
             <TextInput
               placeholder="Amount"
               style={styles.input}
+
+              onChangeText={this.itemInputHandlerAmount}
+              value={this.state.enteredAmount.enteredAmount}
+
               onChangeText={this.incomeInputHandler}
               value={this.state.enteredIncome.enteredIncome}
+
             />
           </View>
           <View style={styles.buttons}>
@@ -186,7 +253,16 @@ const styles = StyleSheet.create({
     flex: 1
   },
   totals: {
+
+    flexDirection: "row",
+    borderColor: "black",
+    borderWidth: 1,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: "grey"
+
     flexDirection: "row"
+
   },
   totalexpense: {
     borderBottomColor: "black",
@@ -217,8 +293,13 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 1,
     backgroundColor: "#ccc",
+
+    flexDirection: "row",
+    justifyContent: "space-between"
+
     borderColor: "black",
     borderWidth: 1
+
   },
   pagebody: {
     margin: 10,
